@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileObserverService", "FileObserverService\FileObserverService.csproj", "{C2A3ABC6-55D8-4CEA-85F2-A317AADBE3F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost", "MOVEitAspire\AppHost.csproj", "{34D8B48E-DB0A-4C68-9B3F-BF9AB47D5CE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MOOVitIntegratorService", "MOOVitIntegratorService\MOOVitIntegratorService.csproj", "{107623F4-68E5-4138-A2A3-887525CCCB5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopUI", "DesktopUI\DesktopUI.csproj", "{2164494E-0CF2-4413-9632-CAB59CB13C71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthtenticationService", "AuthtenticationService\AuthtenticationService.csproj", "{ED7317F7-E9D6-49C1-91BC-C7FAE76FB283}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C2A3ABC6-55D8-4CEA-85F2-A317AADBE3F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2A3ABC6-55D8-4CEA-85F2-A317AADBE3F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2A3ABC6-55D8-4CEA-85F2-A317AADBE3F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2A3ABC6-55D8-4CEA-85F2-A317AADBE3F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34D8B48E-DB0A-4C68-9B3F-BF9AB47D5CE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34D8B48E-DB0A-4C68-9B3F-BF9AB47D5CE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34D8B48E-DB0A-4C68-9B3F-BF9AB47D5CE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34D8B48E-DB0A-4C68-9B3F-BF9AB47D5CE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{107623F4-68E5-4138-A2A3-887525CCCB5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{107623F4-68E5-4138-A2A3-887525CCCB5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{107623F4-68E5-4138-A2A3-887525CCCB5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{107623F4-68E5-4138-A2A3-887525CCCB5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2164494E-0CF2-4413-9632-CAB59CB13C71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2164494E-0CF2-4413-9632-CAB59CB13C71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2164494E-0CF2-4413-9632-CAB59CB13C71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2164494E-0CF2-4413-9632-CAB59CB13C71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED7317F7-E9D6-49C1-91BC-C7FAE76FB283}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED7317F7-E9D6-49C1-91BC-C7FAE76FB283}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED7317F7-E9D6-49C1-91BC-C7FAE76FB283}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED7317F7-E9D6-49C1-91BC-C7FAE76FB283}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
