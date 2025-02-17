@@ -1,5 +1,4 @@
 using MoveitApiClient;
-using Movit.API.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,13 +10,10 @@ builder.Services.AddTransient<MoveitClient>();
 builder.Services.AddSingleton<CancellationTokenSource>();
 
 builder.Services.AddLogging();
-//builder.Services.AddOpenApi();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
 }
 
 app.UseSwagger();

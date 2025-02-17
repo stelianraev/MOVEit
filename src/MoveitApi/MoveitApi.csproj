@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Movit.Client\MoveitApiClient.csproj" />
+    <ProjectReference Include="..\MoveitApiClient\MoveitApiClient.csproj" />
   </ItemGroup>
 
 </Project>

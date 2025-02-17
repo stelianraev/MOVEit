@@ -19,10 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Movit.API\MoveitApi.csproj" />
-    <ProjectReference Include="..\DesktopUI\MoveitWpf.csproj" />
-    <ProjectReference Include="..\FileObserverService\MoveitFileObserverService.csproj" />
-    <ProjectReference Include="..\Movit.Client\MoveitApiClient.csproj" />
+    <ProjectReference Include="..\MoveitApiClient\MoveitApiClient.csproj" />
+    <ProjectReference Include="..\MoveitApi\MoveitApi.csproj" />
+    <ProjectReference Include="..\MoveitFileObserverService\MoveitFileObserverService.csproj" />
+    <ProjectReference Include="..\MoveitWPF\MoveitWpf.csproj" />
   </ItemGroup>
 
 </Project>
