@@ -10,6 +10,7 @@ public static class Program
         builder.AddProject<MoveitWpf>(nameof(MoveitWpf));
         builder.AddProject<MoveitApi>(nameof(MoveitApi));
 
+
         builder.Build().Run();
     }
 }

@@ -1,60 +1,90 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MoveitApiClient.Extensions;
 using MoveitApiClient.Models;
 using System.Net.Http.Headers;
-using System.Text.Json;
+using System.Web;
 
 namespace MoveitApiClient
 {
     public class MoveitClient
     {
         private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _clientFactory;
         private readonly ILogger<MoveitClient> _logger;
         private readonly MoveitConfiguration _config;
 
-        //private string _accessToken;
-        //private readonly string _clientId;
-        //private readonly string _clientSecret;
-
-        public MoveitClient(HttpClient httpClient, ILogger<MoveitClient> logger, IOptions<MoveitConfiguration> config/*string baseUrl, string clientId, string clientSecret*/)
+        public MoveitClient(IHttpClientFactory clientFactory, ILogger<MoveitClient> logger, IOptions<MoveitConfiguration> config)
         {
-            _httpClient = httpClient;
+            _clientFactory = clientFactory;
             _logger = logger;
             _config = config.Value;
-            //_baseUrl = baseUrl;
-            //_clientId = clientId;
-            //_clientSecret = clientSecret;
+
+            _httpClient = _clientFactory.CreateClient();
         }
 
-        public async Task<MoveitTokenResponse> AuthenticateAsync(string username, string password)
+        public async Task<HttpResponseMessage> GetToken(string username, string password)
         {
-            //var body = new {_username, _password }.CreateJsonContent();
             var requestData = new Dictionary<string, string>
-            {
-                { "grant_type", "password" },
-                //{ "client_id", _clientId },
-                //{ "client_secret", _clientSecret },
-                { "username", username },
-                { "password", password }
-            }.CreateJsonContent();
+                {
+                      { "grant_type", "password" },
+                      { "username", username },
+                      { "password", password }
+                };
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{_config.BaseUrl}/api/v1/token")
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{_config.BaseUrl}token")
             {
-                Content = requestData
+                Content = new FormUrlEncodedContent(requestData)
             };
 
             var response = await _httpClient.SendAsync(request);
-            if (!response.IsSuccessStatusCode)
+
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> RevokeTokenAsync(string token)
+        {
+            var requestData = new Dictionary<string, string>
+                {
+                      { "token", token }
+                };
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{_config.BaseUrl}token/revoke")
             {
-                _logger.LogError("Failed to authenticate with MOVEit API. Status Code: {StatusCode}", response.StatusCode);
-                throw new  Exception("MOVEit Authentication failed.");
-            }
+                Content = new FormUrlEncodedContent(requestData)
+            };
 
-            var responseContent = await response.Content.ReadAsStringAsync();
+            var response = await _httpClient.SendAsync(request);
+            return response;
+        }
 
-            var tokenResponse = JsonSerializer.Deserialize<MoveitTokenResponse>(responseContent);
-            return tokenResponse;            
+        public async Task<HttpResponseMessage> GetAllFiles(int page,
+                                                           int perPage,
+                                                           string sortField,
+                                                           string sortDirection,
+                                                           bool? newOnly,
+                                                           string sinceDate,
+                                                           string accessToken)
+           {
+            var queryParams = HttpUtility.ParseQueryString(string.Empty);
+            queryParams["page"] = page.ToString();
+            queryParams["perPage"] = perPage.ToString();
+            queryParams["sortField"] = sortField;
+            queryParams["sortDirection"] = sortDirection;
+
+            if (newOnly.HasValue)
+                queryParams["newOnly"] = newOnly.Value.ToString().ToLower();
+
+            if (!string.IsNullOrEmpty(sinceDate))
+                queryParams["sinceDate"] = sinceDate;
+
+            string requestUrl = $"{_config.BaseUrl}files?{queryParams}";
+
+            using var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            return await _httpClient.SendAsync(request);
         }
     }
 }

@@ -1,5 +1,8 @@
-﻿using MoveitApiClient;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+using MoveitApiClient;
 using Movit.API.Helper;
+using static Movit.API.Controllers.GetTokenEndpoint;
 
 namespace Movit.API.Controllers
 {
@@ -7,22 +10,42 @@ namespace Movit.API.Controllers
     {
         public void Map(IEndpointRouteBuilder app)
         {
-            app.MapGet("/authenticate/token", GetTokenAsync);
+            app.MapPost("/authenticate/token", GetTokenAsync);
         }
 
-        public async Task<TokenResponse> GetTokenAsync(string username, string password, MoveitClient movitClient, CancellationToken cancellationToken)
+        public async Task<IResult> GetTokenAsync([FromBody] TokenRequest tokenRequest,
+            MoveitClient movitClient,
+            [FromServices] IValidator<TokenRequest> validator,
+            CancellationToken cancellationToken)
         {
-            var token = await movitClient.AuthenticateAsync(username, password);
+            await validator.ValidateAndThrowAsync(tokenRequest, cancellationToken);
+            var response = await movitClient.GetToken(tokenRequest.Username, tokenRequest.Password);
 
-            var accessToken = token?.AccessToken ?? throw new Exception("Invalid token response.");
-
-            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
-            //_logger.LogInformation("Successfully authenticated with MOVEit API.");
-
-            return new TokenResponse(token.AccessToken, token.ExpiresIn, token.RefreshToken);
-            //TODO Token expiration
+            if (response.IsSuccessStatusCode)
+            {
+                return Results.Ok(response);
+            }
+            else
+            {
+                return Results.BadRequest("Authentication Failed");
+            }
         }
+        public record TokenRequest(string Username, string Password);
+    }
+}
 
-        public record TokenResponse(string Token, int ExpiresIn, string RefreshToken);
+public class GetTokenRequestValidator : AbstractValidator<TokenRequest>
+{
+    public GetTokenRequestValidator()
+    {
+        RuleFor(x => x.Username)
+            .NotEmpty()
+            .NotNull()
+            .WithMessage("Username is required");
+
+        RuleFor(x => x.Password)
+            .NotEmpty()
+            .NotNull()
+            .WithMessage("Password is required");
     }
 }
