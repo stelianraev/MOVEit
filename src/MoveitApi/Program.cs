@@ -15,6 +15,7 @@ builder.Services.AddSingleton<CancellationTokenSource>();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddLogging();
+builder.Services.AddAntiforgery();
 
 var app = builder.Build();
 
@@ -25,9 +26,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
+app.UseAntiforgery();
 app.MapEndpoints();
-
 app.MapControllers();
 
 app.Run();

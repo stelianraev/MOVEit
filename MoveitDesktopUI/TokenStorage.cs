@@ -6,7 +6,7 @@
     using System.Security.Cryptography;
     using System.Text;
 
-    namespace MoveitWpf
+    namespace MoveitDesktopUI
     {
         public static class TokenStorage
         {

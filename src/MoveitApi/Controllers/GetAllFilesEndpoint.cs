@@ -13,20 +13,24 @@ namespace MoveitApi.Controllers
         }
 
         public async Task<IResult> GetAllFiles(
-                                    [FromQuery] GetAllFilesRequest getAllFilesRequest,
+                                    //[FromQuery] GetAllFilesRequest getAllFilesRequest,
                                     [FromHeader(Name = "Authorization")] string accessToken,
                                     MoveitClient movitClient,
-                                    [FromServices] IValidator<GetAllFilesRequest> validator,
+                                    //[FromServices] IValidator<GetAllFilesRequest> validator,
                                     CancellationToken cancellationToken)
         {
-            await validator.ValidateAndThrowAsync(getAllFilesRequest, cancellationToken);
+            //await validator.ValidateAndThrowAsync(getAllFilesRequest, cancellationToken);
 
-            var response = await movitClient.GetAllFiles(getAllFilesRequest.Page,
-                                                         getAllFilesRequest.PerPage,
-                                                         getAllFilesRequest.SortField,
-                                                         getAllFilesRequest.SortDirection,
-                                                         getAllFilesRequest.NewOnly,
-                                                         getAllFilesRequest.SinceDate,
+            var response = await movitClient.GetAllFilesAsync(0,
+                                                         int.MaxValue,
+                                                         default,
+                                                         default,
+                                                         default,
+                                                         default,
+                                                         //getAllFilesRequest.SortField,
+                                                         //getAllFilesRequest.SortDirection,
+                                                         //getAllFilesRequest.NewOnly,
+                                                         //getAllFilesRequest.SinceDate,
                                                          accessToken);
 
             if (!response.IsSuccessStatusCode)
@@ -40,19 +44,19 @@ namespace MoveitApi.Controllers
 
     }
 
-    public record GetAllFilesRequest(int Page, int PerPage, string SortField, string SortDirection, bool NewOnly, string SinceDate);
+    //public record GetAllFilesRequest(int Page, int PerPage, string SortField, string SortDirection, bool? NewOnly, string SinceDate);
 
-    public class GetAllFilesRequestValidator : AbstractValidator<GetAllFilesRequest>
-    {
-        public GetAllFilesRequestValidator()
-        {
-            RuleFor(x => x.Page)
-             .Must(x => x >= 0)
-             .WithMessage("Page must be positive number");
+    //public class GetAllFilesRequestValidator : AbstractValidator<GetAllFilesRequest>
+    //{
+    //    public GetAllFilesRequestValidator()
+    //    {
+    //        RuleFor(x => x.Page)
+    //         .Must(x => x >= 0)
+    //         .WithMessage("Page must be positive number");
 
-            RuleFor(x => x.PerPage)
-             .Must(x => x >= 0)
-             .WithMessage("PerPage must be positive number");
-        }
-    }
+    //        RuleFor(x => x.PerPage)
+    //         .Must(x => x >= 0)
+    //         .WithMessage("PerPage must be positive number");
+    //    }
+    //}
 }

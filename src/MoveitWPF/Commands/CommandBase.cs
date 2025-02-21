@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace DesktopUI.Commands
+namespace MoveitWpf.Commands
 {
     public abstract class CommandBase : ICommand
     {

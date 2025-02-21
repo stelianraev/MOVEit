@@ -18,16 +18,16 @@ namespace Movit.API.Controllers
             [FromServices] IValidator<TokenRequest> validator,
             CancellationToken cancellationToken)
         {
-            await validator.ValidateAndThrowAsync(tokenRequest, cancellationToken);
-            var response = await movitClient.GetToken(tokenRequest.Username, tokenRequest.Password);
+            await validator.ValidateAndThrowAsync(tokenRequest, cancellationToken);           
 
-            if (response.IsSuccessStatusCode)
+            try
             {
+                var response = await movitClient.GetToken(tokenRequest.Username, tokenRequest.Password);
                 return Results.Ok(response);
             }
-            else
+            catch (Exception ex)
             {
-                return Results.BadRequest("Authentication Failed");
+                return Results.StatusCode(500);
             }
         }
         public record TokenRequest(string Username, string Password);

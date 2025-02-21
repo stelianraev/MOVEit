@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MoveitApiClient;
 using Movit.API.Helper;
+using static MoveitApi.Controllers.RevokeTokenEndpoint;
 
 namespace MoveitApi.Controllers
 {
@@ -12,31 +13,30 @@ namespace MoveitApi.Controllers
             app.MapPost("/authenticate/revoke", RevokeTokenAsync);
         }
 
-        public async Task<IResult> RevokeTokenAsync([FromBody] string token,
+        public async Task<IResult> RevokeTokenAsync([FromBody] RevokeTokenRequest revokeTokenRequest,
             MoveitClient movitClient,
-            [FromServices] IValidator<string> validator,
+            [FromServices] IValidator<RevokeTokenRequest> validator,
             CancellationToken cancellationToken)
         {
-            await validator.ValidateAndThrowAsync(token, cancellationToken);
+            await validator.ValidateAndThrowAsync(revokeTokenRequest, cancellationToken);
 
-            var response = await movitClient.RevokeTokenAsync(token);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
+                var response = await movitClient.RevokeTokenAsync(revokeTokenRequest.Token);
                 return Results.Ok(response);
             }
-            else
+            catch (Exception ex)
             {
-                return Results.BadRequest("Revoke Token Failed");
+                return Results.StatusCode(500);
             }
         }
         public record RevokeTokenRequest(string Token);
     }
-    public class GetTokenRequestValidator : AbstractValidator<string>
+    public class GetTokenRequestValidator : AbstractValidator<RevokeTokenRequest>
     {
         public GetTokenRequestValidator()
         {
-            RuleFor(x => x)
+            RuleFor(x => x.Token)
                 .NotEmpty()
                 .NotNull()
                 .WithMessage("Valid Token is required");

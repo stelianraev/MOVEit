@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace DesktopUI.ViewModels
+namespace MoveitWpf.ViewModels
 {
     public class ViewModelBase : INotifyPropertyChanged
     {

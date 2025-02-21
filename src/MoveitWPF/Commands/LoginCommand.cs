@@ -1,6 +1,6 @@
-﻿using DesktopUI.ViewModels;
+﻿using MoveitWpf.ViewModels;
 
-namespace DesktopUI.Commands
+namespace MoveitWpf.Commands
 {
     public class LoginCommand : AsyncCommandBase
     {

@@ -1,4 +1,4 @@
-﻿namespace DesktopUI.Commands
+﻿namespace MoveitWpf.Commands
 {
     using System.Threading.Tasks;
     public abstract class AsyncCommandBase : CommandBase

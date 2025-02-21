@@ -1,9 +1,12 @@
-﻿using System.Windows;
+﻿using MoveitWpf.ViewModels;
+using System.Windows;
 using System.Windows.Controls;
-using DesktopUI.ViewModels;
 
-namespace DesktopUI.Views
+namespace MoveitWpf.Views
 {
+    /// <summary>
+    /// Interaction logic for LoginView.xaml
+    /// </summary>
     public partial class LoginView : UserControl
     {
         public LoginView()

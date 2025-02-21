@@ -6,11 +6,11 @@ public static class Program
     {
         var builder = DistributedApplication.CreateBuilder(args);
 
-        builder.AddProject<MoveitFileObserverService>(nameof(MoveitFileObserverService));
-        builder.AddProject<MoveitWpf>(nameof(MoveitWpf));
         builder.AddProject<MoveitApi>(nameof(MoveitApi));
+        builder.AddProject<MoveitDesktopUI>(nameof(MoveitDesktopUI));
+        builder.AddProject<MoveitFileObserverService>(nameof(MoveitFileObserverService));
 
-
-        builder.Build().Run();
+        var app = builder.Build();
+        app.Run();
     }
 }

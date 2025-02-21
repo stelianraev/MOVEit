@@ -1,25 +1,22 @@
-﻿using DesktopUI.ViewModels;
+﻿using MoveitWpf.MoveitWpf;
 using Newtonsoft.Json;
-using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Input;
 
 namespace MoveitWpf.ViewModels
 {
-    public class ListFileViewModel : ViewModelBase
+    public class FilesWebViewModel : ViewModelBase
     {
         private readonly HttpClient _httpClient;
-        private readonly string _token;
+        private readonly TokenStorage.TokenData _token;
         private List<Item> files = new List<Item>();
 
-        public ListFileViewModel()
+        public FilesWebViewModel()
         {
             _httpClient = new HttpClient();
-            var _token = TokenStorage.GetToken();
+            _token = TokenStorage.GetAccessToken();
         }
 
         public ICommand LoginCommand { get; }
@@ -33,7 +30,7 @@ namespace MoveitWpf.ViewModels
                 while (true)
                 {
                     var requestData = new GetAllFilesRequest(currentPage, 10000, null, null, false, null);
-                    string accessToken = _token;
+                    string accessToken = _token.AccessToken;
 
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

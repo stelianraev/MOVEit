@@ -1,9 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MoveitWpf.ViewModels;
+using MoveitDesktopUI.Services;
+using System;
+using System.Configuration;
+using System.Data;
 using System.Windows;
 
-namespace MoveitWpf
+namespace MoveitDesktopUI
 {
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
     public partial class App : Application
     {
         private ServiceProvider _serviceProvider;
@@ -17,20 +23,8 @@ namespace MoveitWpf
 
         private void ConfigureServices(ServiceCollection services)
         {
-            services.AddSingleton<LoginViewModel>();
-            services.AddSingleton<MainViewModel>();
             services.AddSingleton<MainWindow>();
         }
-
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-            mainWindow.Show();
-
-            var loginViewModel = _serviceProvider.GetRequiredService<LoginViewModel>();
-            Task.Run(() => loginViewModel.InitializeAsync());
-
-            base.OnStartup(e);
-        }
     }
+
 }
