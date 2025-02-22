@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MoveitApiClient.Models;
+using MoveitApiClient.Models.ResponseModels;
+using MoveitApiClient.Models.Responses;
 using Newtonsoft.Json;
 using System.IO;
 using System.IO.Enumeration;
@@ -46,16 +48,8 @@ namespace MoveitApiClient
             var response = await _httpClient.SendAsync(request);
             var responseBody = await response.Content.ReadAsStringAsync();
 
-            if (response.IsSuccessStatusCode)
-            {
-                var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(responseBody);
-                return tokenResponse;
-            }
-            else
-            {
-                _logger.LogError($"Error getting token: {responseBody}");
-                throw new Exception("Error getting token");
-            }
+            var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(responseBody);
+            return tokenResponse;
         }
 
         public async Task<RevokeTokenResponse> RevokeTokenAsync(string token)
@@ -77,25 +71,18 @@ namespace MoveitApiClient
             var response = await _httpClient.SendAsync(request, _cancelationToken);
             var responseBody = await response.Content.ReadAsStringAsync();
 
-            if (response.IsSuccessStatusCode)
-            {
-                var revokeTokenResponse = JsonConvert.DeserializeObject<RevokeTokenResponse>(responseBody);
-                return revokeTokenResponse;
-            }
-            else
-            {
-                _logger.LogError($"Error getting token: {responseBody}");
-                throw new Exception("Error getting token");
-            }
+            var revokeTokenResponse = JsonConvert.DeserializeObject<RevokeTokenResponse>(responseBody);
+            revokeTokenResponse.StatusCode = (int)response.StatusCode;
+            return revokeTokenResponse;
         }
 
-        public async Task<HttpResponseMessage> GetAllFilesAsync(int page,
-                                                                int perPage,
-                                                                string sortField,
-                                                                string sortDirection,
-                                                                bool? newOnly,
-                                                                string sinceDate,
-                                                                string accessToken)
+        public async Task<GetFilesResponse> GetAllFilesAsync(int page,
+                                                             int perPage,
+                                                             string? sortField,
+                                                             string? sortDirection,
+                                                             bool? newOnly,
+                                                             string? sinceDate,
+                                                             string accessToken)
         {
             var queryParams = HttpUtility.ParseQueryString(string.Empty);
             queryParams["page"] = page.ToString();
@@ -104,10 +91,14 @@ namespace MoveitApiClient
             queryParams["sortDirection"] = sortDirection;
 
             if (newOnly.HasValue)
+            {
                 queryParams["newOnly"] = newOnly.Value.ToString().ToLower();
+            }
 
             if (!string.IsNullOrEmpty(sinceDate))
+            {
                 queryParams["sinceDate"] = sinceDate;
+            }
 
             string requestUrl = $"{_config.BaseUrl}files?{queryParams}";
 
@@ -115,7 +106,11 @@ namespace MoveitApiClient
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            return await _httpClient.SendAsync(request);
+            var response = await _httpClient.SendAsync(request, _cancelationToken);
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            var parsed = JsonConvert.DeserializeObject<GetFilesResponse>(responseBody);
+            return parsed;
         }
 
         public async Task<UploadFileResponse> UploadFileAsync(string folderId,
@@ -156,7 +151,14 @@ namespace MoveitApiClient
                                                                      string comments,
                                                                      string accessToken)
         {
-            // Build the form data
+            var fileContent = new StreamContent(file);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+            {
+                Name = "\"file\"",
+                FileName = $"\"{fileName}\""
+            };
+
             var formData = new MultipartFormDataContent
             {
                 { new StringContent(hashType),  "hashtype" },
@@ -171,6 +173,7 @@ namespace MoveitApiClient
                 Content = formData
             };
 
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/octet-stream"));
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var response = await _httpClient.SendAsync(request, _cancelationToken);
@@ -236,6 +239,7 @@ namespace MoveitApiClient
                         Content = form
                     };
 
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/octet-stream"));
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                     var response = await _httpClient.SendAsync(request, _cancelationToken);

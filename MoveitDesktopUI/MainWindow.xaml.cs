@@ -8,36 +8,56 @@ using System.Windows;
 
 namespace MoveitDesktopUI
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private readonly HttpClient _httpClient;
         private readonly LocalFilesObserver _localFilesObserver;
+        private readonly RemoteFileObserver _remoteFileObserver;
+        private readonly GetRemoteFiles _remoteFiles;
+        private readonly CancellationTokenSource _cancellationTokenSource;
         private readonly string _baseFolder = @"C:\MOVEit";
 
         public MainWindow()
         {
             InitializeComponent();
+            _cancellationTokenSource = new CancellationTokenSource();
             _httpClient = new HttpClient();
-            _localFilesObserver = new LocalFilesObserver(FileTree);
-            CheckIsTokenValid();
+            _remoteFiles = new GetRemoteFiles(_httpClient, RemoteFileTree, _cancellationTokenSource.Token);
+            _localFilesObserver = new LocalFilesObserver(LocalFileTree);
+            _remoteFileObserver = new RemoteFileObserver(RemoteFileTree);
+
+            //Preventing deadlock
+            Loaded += async (s, e) => await CheckIsTokenValid();
         }
 
-        private void CheckIsTokenValid()
+        private async Task CheckIsTokenValid()
         {
             var accessToken = TokenStorage.GetAccessToken();
 
-            if (accessToken != null)
+            //TODO : I revoke token succesfully but is declined by endpoint return 401. I need to check this. At the moment I will work with Expires Time
+            //var revokeTokenResponse = await RevokeTokenAsync(accessToken.AccessToken)/*.ConfigureAwait(false)*/;
+
+            //if(revokeTokenResponse.IsSuccessStatusCode)
+            //{
+            //    TokenStorage.RemoveAccessToken();
+            //    TokenStorage.SaveAccessToken(accessToken.AccessToken, DateTime.UtcNow);
+            //}
+
+            if (accessToken != null && !string.IsNullOrEmpty(accessToken.AccessToken))
             {
                 if (accessToken.ExpiresDateTime > DateTime.UtcNow)
                 {
+                    await _remoteFiles.GetRemoteFilesAsync(1, 1000, accessToken.AccessToken);
+                    _localFilesObserver.LoadSpecificFolder(_baseFolder);
+                    await _remoteFileObserver.RemoteResponseObserverAsync(new GetFilesResponse());
+
                     UsernameInput.Visibility = Visibility.Hidden;
                     PasswordInput.Visibility = Visibility.Hidden;
+                    UsernameLabel.Visibility = Visibility.Hidden;
+                    PasswordLabel.Visibility = Visibility.Hidden;
                     LoginBtn.Visibility = Visibility.Hidden;
-                    _localFilesObserver.LoadSpecificFolder(_baseFolder);
-                    FileTree.Visibility = Visibility.Visible;
+                    LocalFileTree.Visibility = Visibility.Visible;
+                    RemoteFileTree.Visibility = Visibility.Visible;
                 }
             }
         }
@@ -77,8 +97,9 @@ namespace MoveitDesktopUI
                             LoginBtn.Visibility = Visibility.Hidden;
 
                             _localFilesObserver.LoadSpecificFolder(_baseFolder);
+                            _remoteFileObserver.GetRemoteFilesAsync(1, 1000, tokenResponse.AccessToken);
 
-                            FileTree.Visibility = Visibility.Visible;
+                            LocalFileTree.Visibility = Visibility.Visible;
 
                             //TODO Log success login
                         }
@@ -103,6 +124,16 @@ namespace MoveitDesktopUI
                 //TODO ex lgging
                 MessageBox.Show("Invalid login", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private async Task<HttpResponseMessage> RevokeTokenAsync(string refreshToken)
+        {
+            var requestData = new RevokeTokenRequest { Token = refreshToken };
+
+            var json = JsonConvert.SerializeObject(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            return await _httpClient.PostAsync("https://localhost:7040/authenticate/revoke", content);
         }
     }
 }

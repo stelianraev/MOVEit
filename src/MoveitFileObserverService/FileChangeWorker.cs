@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace FileObserverService
 {
-    public class Worker(ILogger<Worker> logger, IOptionsMonitor<FileObserverServiceConfig> config) : BackgroundService
+    public class Worker(ILogger<Worker> logger, IOptionsMonitor<ServiceConfig> config) : BackgroundService
     {
         private string _folderPath = config.CurrentValue.FolderMonitoringPath;
 

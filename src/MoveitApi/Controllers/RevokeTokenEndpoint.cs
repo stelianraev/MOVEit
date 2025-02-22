@@ -23,15 +23,34 @@ namespace MoveitApi.Controllers
             try
             {
                 var response = await movitClient.RevokeTokenAsync(revokeTokenRequest.Token);
-                return Results.Ok(response);
+
+                if(response.StatusCode == 401)
+                {
+                    return Results.Unauthorized();
+                }
+                if(response.StatusCode == 404)
+                {
+                    return Results.NotFound();
+                }
+                if (response.StatusCode == 200)
+                {
+                    return Results.Ok(response);
+                }
+                else
+                {
+                    return Results.BadRequest(response);
+                }
             }
             catch (Exception ex)
             {
                 return Results.StatusCode(500);
             }
         }
+
         public record RevokeTokenRequest(string Token);
     }
+
+
     public class GetTokenRequestValidator : AbstractValidator<RevokeTokenRequest>
     {
         public GetTokenRequestValidator()

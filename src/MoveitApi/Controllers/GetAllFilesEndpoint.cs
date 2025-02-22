@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MoveitApiClient;
 using Movit.API.Helper;
 
@@ -12,39 +11,42 @@ namespace MoveitApi.Controllers
             app.MapGet("/files/getall", GetAllFiles);
         }
 
-        public async Task<IResult> GetAllFiles(
-                                    //[FromQuery] GetAllFilesRequest getAllFilesRequest,
-                                    [FromHeader(Name = "Authorization")] string accessToken,
-                                    MoveitClient movitClient,
-                                    //[FromServices] IValidator<GetAllFilesRequest> validator,
-                                    CancellationToken cancellationToken)
+        public async Task<IResult> GetAllFiles([FromHeader(Name = "X-Auth-Token")] string accessToken,
+                                               CancellationToken cancellationToken,
+                                               MoveitClient movitClient,
+                                               [FromQuery] int page = 1,
+                                               [FromQuery] int perPage = 1000,
+                                               [FromQuery] string? sortField = "path",
+                                               [FromQuery] string? sortDirection = "asc",
+                                               [FromQuery] bool newOnly = false,
+                                               [FromQuery] string? sinceDate = null)
         {
-            //await validator.ValidateAndThrowAsync(getAllFilesRequest, cancellationToken);
-
-            var response = await movitClient.GetAllFilesAsync(0,
-                                                         int.MaxValue,
-                                                         default,
-                                                         default,
-                                                         default,
-                                                         default,
-                                                         //getAllFilesRequest.SortField,
-                                                         //getAllFilesRequest.SortDirection,
-                                                         //getAllFilesRequest.NewOnly,
-                                                         //getAllFilesRequest.SinceDate,
-                                                         accessToken);
-
-            if (!response.IsSuccessStatusCode)
+            if (string.IsNullOrWhiteSpace(accessToken))
             {
-                return Results.BadRequest("Authentication Failed");
+                return Results.Unauthorized();
+            }               
+
+            try
+            {
+                var response = await movitClient.GetAllFilesAsync(page,
+                                                                  perPage,
+                                                                  sortField,
+                                                                  sortDirection,
+                                                                  newOnly,
+                                                                  sinceDate,
+                                                                  accessToken);
+
+
+                return Results.Ok(response);
             }
-
-            string responseBody = await response.Content.ReadAsStringAsync();
-            return Results.Ok(responseBody);
+            catch (Exception ex)
+            {
+                return Results.StatusCode(500);
+            }
         }
+    }   
 
-    }
-
-    //public record GetAllFilesRequest(int Page, int PerPage, string SortField, string SortDirection, bool? NewOnly, string SinceDate);
+    public record GetAllFilesRequest(int Page, int PerPage, string SortField, string SortDirection, bool? NewOnly, string SinceDate);
 
     //public class GetAllFilesRequestValidator : AbstractValidator<GetAllFilesRequest>
     //{

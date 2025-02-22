@@ -14,8 +14,9 @@ builder.Services.AddTransient<MoveitClient>();
 builder.Services.AddSingleton<CancellationTokenSource>();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+//builder.Services.AddAntiforgery(options => options.SuppressXFrameOptionsHeader = true);
+
 builder.Services.AddLogging();
-builder.Services.AddAntiforgery();
 
 var app = builder.Build();
 
@@ -26,7 +27,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseAntiforgery();
 app.MapEndpoints();
 app.MapControllers();
 

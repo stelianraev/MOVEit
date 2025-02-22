@@ -1,8 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MoveitDesktopUI.Services;
-using System;
-using System.Configuration;
-using System.Data;
 using System.Windows;
 
 namespace MoveitDesktopUI
@@ -23,6 +19,7 @@ namespace MoveitDesktopUI
 
         private void ConfigureServices(ServiceCollection services)
         {
+            services.AddHttpClient();
             services.AddSingleton<MainWindow>();
         }
     }

@@ -8,14 +8,9 @@ using Image = System.Windows.Controls.Image;
 
 namespace MoveitDesktopUI.Services
 {
-    public class LocalFilesObserver
+    public class LocalFilesObserver(TreeView fileTree)
     {
-        private readonly TreeView _fileTree;
-
-        public LocalFilesObserver(TreeView fileTree)
-        {
-            _fileTree = fileTree ?? throw new ArgumentNullException(nameof(fileTree));
-        }
+        private readonly TreeView _fileTree = fileTree ?? throw new ArgumentNullException(nameof(fileTree));
 
         /// <summary>
         /// Loads the specified folder into the TreeView.
@@ -121,7 +116,7 @@ namespace MoveitDesktopUI.Services
             }
             catch (UnauthorizedAccessException)
             {
-                return 0; // Ignore inaccessible folders
+                return 0;
             }
         }
 
