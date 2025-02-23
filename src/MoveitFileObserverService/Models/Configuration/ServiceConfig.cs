@@ -2,6 +2,8 @@
 {
     public class ServiceConfig
     {
-        public required string FolderMonitoringPath { get; set; }
+        public string FolderMonitoringPath { get; init; }
+
+        public string RemoteFolderId { get; init; }
     }
 }

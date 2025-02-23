@@ -1,96 +1,216 @@
-using FileObserverService.Enum;
 using FileObserverService.Models.Configuration;
 using Microsoft.Extensions.Options;
+using MoveitFileObserverService.Models;
+using MoveitWpf.MoveitFileOberverService.Services;
+using Newtonsoft.Json;
+using System.Collections.Concurrent;
+using System.Net.Http.Headers;
 
 namespace FileObserverService
 {
-    public class Worker(ILogger<Worker> logger, IOptionsMonitor<ServiceConfig> config) : BackgroundService
+    public class FileChangeWorker : BackgroundService
     {
-        private string _folderPath = config.CurrentValue.FolderMonitoringPath;
+        private static readonly HttpClient _httpClient = new HttpClient();
+
+        private readonly ILogger<FileChangeWorker> _logger;
+        private readonly ServiceConfig _config;
+        private readonly FileSystemWatcher _watcher;
+        private readonly ConcurrentQueue<string> _fileCreateQueue;
+        private readonly ConcurrentQueue<string> _fileDeleteQueue;
+        private readonly SemaphoreSlim _queueSemaphore;
+
+        private bool _isProcessingFiles;
+
+        public FileChangeWorker(ILogger<FileChangeWorker> logger, IOptionsMonitor<ServiceConfig> config)
+        {
+            _config = config.CurrentValue;
+            _logger = logger;
+            _httpClient.Timeout = TimeSpan.FromMinutes(10);
+            _fileCreateQueue = new ConcurrentQueue<string>();
+            _fileDeleteQueue = new ConcurrentQueue<string>();
+            _queueSemaphore = new SemaphoreSlim(1, 1);
+            _isProcessingFiles = false;
+
+            CreateObservableFolder();
+
+            _watcher = new FileSystemWatcher
+            {
+                Path = _config.FolderMonitoringPath,
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite,
+                IncludeSubdirectories = true
+            };
+
+            _watcher.Created += OnFileCreated;
+            _watcher.Deleted += OnFileDeleted;
+
+        }
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
+            _watcher.EnableRaisingEvents = true;
+
             while (!cancellationToken.IsCancellationRequested)
             {
-                await Task.Delay(5000, cancellationToken);
+                //TODO Logic to stop listener if token is expired
 
-                var isDirectoryExisted = CreateObservableFolder();
-                if (isDirectoryExisted)
+                await ProcessFileQueue();
+
+                await Task.Delay(2000, cancellationToken);
+            }
+        }
+
+        private async Task ProcessFileQueue()
+        {
+            if (_isProcessingFiles)
+            {
+                return;
+            }
+
+            await _queueSemaphore.WaitAsync();
+
+            try
+            {
+                _isProcessingFiles = true;
+
+                while (_fileCreateQueue.Count > 0 || _fileDeleteQueue.Count > 0)
                 {
-                    var watcher = new FileSystemWatcher
+                    if (_fileCreateQueue.TryDequeue(out var filePath))
                     {
-                        Path = _folderPath,
-                        NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite,
-                        IncludeSubdirectories = true,
-                        EnableRaisingEvents = true
-                    };
+                        await UploadFileAsync(filePath);
+                    }
 
-                    watcher.Created += OnFileChanged;
-                    watcher.Deleted += OnFileChanged;
-                    watcher.Renamed += OnFileRenamed;
-                    watcher.Changed += OnFileChanged;
+                    if (_fileDeleteQueue.TryDequeue(out var fileName))
+                    {
+                        await DeleteFileAsync(fileName);
+                    }
                 }
+
+                _isProcessingFiles = false;
             }
-        }
-
-        private async void OnFileChanged(object sender, FileSystemEventArgs e)
-        {
-            //TODO
-            var changeType = e.ChangeType switch
+            catch(Exception ex)
             {
-                WatcherChangeTypes.Created => FileChangeType.Created,
-                WatcherChangeTypes.Deleted => FileChangeType.Deleted,
-                WatcherChangeTypes.Changed => FileChangeType.Modified,
-                _ => FileChangeType.Unknown
-            };
-
-            if (changeType != FileChangeType.Unknown)
-            {
-                await HandleChange(e.FullPath, changeType);
+                _logger.LogError(ex, $"Processing file error: {ex.Message}");
             }
-        }
-        private async void OnFileRenamed(object sender, RenamedEventArgs e)
-        {
-            await HandleChange(e.FullPath, FileChangeType.Renamed);
-            logger.LogInformation($"File renamed from {e.OldFullPath} to {e.FullPath}");
+            finally
+            {
+                _queueSemaphore.Release();
+            }
+           
         }
 
-        private async Task HandleChange(string path, FileChangeType changeType)
+
+        private async Task UploadFileAsync(string filePath)
         {
             try
             {
-                // Wait for file to be ready (if creation/update)
-                if (changeType is FileChangeType.Created or FileChangeType.Modified)
-                {
-                    await WaitForFileReady(path);
-                }
+                var token = TokenStorage.GetAccessToken().AccessToken;
+                var folderId = _config.RemoteFolderId;
+                var fileName = Path.GetFileName(filePath);
 
-                //TODO
+                using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 4096, true);
+                using var fileContent = new StreamContent(fileStream);
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+
+                using var content = new MultipartFormDataContent
+                {
+                    { new StringContent(folderId), "FolderId" },
+                    { new StringContent(token), "AccessToken" },
+                    { fileContent, "File", fileName }
+                };
+
+                using var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7040/files/upload")
+                {
+                    Content = content
+                };
+
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation($"[UploadFile] File successfully sent: {fileName}");
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    _logger.LogError($"[UploadFile] Failed to upload {fileName}: {errorMessage}");
+                }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error handling file change for {Path}", path);
+                _logger.LogError(ex, $"[UploadFile] Error uploading file: {filePath}");
             }
         }
-        private async Task WaitForFileReady(string path)
+
+        private async Task DeleteFileAsync(string fileName)
         {
-
-            //TODO add POLLy
-            const int maxAttempts = 5;
-            const int delayMs = 500;
-
-            for (var attempt = 0; attempt < maxAttempts; attempt++)
+            try
             {
-                try
+                var token = TokenStorage.GetAccessToken()?.AccessToken;
+                if (string.IsNullOrEmpty(token))
                 {
-                    using var fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None);
+                    _logger.LogError("[DeleteFile] No valid access token.");
                     return;
                 }
-                catch (IOException)
+
+                var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7040/files/getall?perPage=10000");
+                request.Headers.Add("X-Auth-Token", token);
+
+                var response = await _httpClient.SendAsync(request);
+                var content = await response.Content.ReadAsStringAsync();
+                var remoteFiles = JsonConvert.DeserializeObject<GetFilesResponse>(content);
+
+                var fileToRemove = remoteFiles?.Items.FirstOrDefault(f => f.Name == fileName);
+                if (fileToRemove == null)
                 {
-                    if (attempt == maxAttempts - 1) throw;
-                    await Task.Delay(delayMs);
+                    _logger.LogWarning($"[DeleteFile] File not found in remote storage: {fileName}");
+                    return;
                 }
+
+                var deleteRequest = new HttpRequestMessage(HttpMethod.Delete, $"https://localhost:7040/files/delete?fileId={fileToRemove.Id}");
+                deleteRequest.Headers.Add("X-Auth-Token", token);
+
+                var deleteResponse = await _httpClient.SendAsync(deleteRequest);
+                var deleteResponseContent = await deleteResponse.Content.ReadAsStringAsync();
+
+                if (deleteResponse.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation($"[DeleteFile] File deleted successfully: {fileName}");
+                }
+                else
+                {
+                    _logger.LogError($"[DeleteFile] Failed to delete file {fileName}: {deleteResponseContent}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"[DeleteFile] Error deleting file: {fileName}");
+            }
+        }
+                
+        private void OnFileCreated(object sender, FileSystemEventArgs e)
+        {
+            try
+            {
+                _fileCreateQueue.Enqueue(e.FullPath);
+                _logger.LogInformation($"[OnFileCreated] Queued file: {e.Name}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"[OnFileCreated] Error queuing file: {e.Name}");
+            }
+        }
+
+        private void OnFileDeleted(object sender, FileSystemEventArgs e)
+        {
+            try
+            {
+                _fileDeleteQueue.Enqueue(e.Name);
+                _logger.LogInformation($"[OnFileDeleted] Queued file for deletion: {e.Name}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"[OnFileDeleted] Error queuing file for deletion: {e.Name}");
             }
         }
 
@@ -98,7 +218,7 @@ namespace FileObserverService
         {
             try
             {
-                var entryFolder = _folderPath;
+                var entryFolder = _config.FolderMonitoringPath;
                 if (!Directory.Exists(entryFolder))
                 {
                     Directory.CreateDirectory(entryFolder);
@@ -108,7 +228,7 @@ namespace FileObserverService
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error creating entry folder");
+                _logger.LogError(ex, "Error creating entry folder");
                 return false;
             }
         }

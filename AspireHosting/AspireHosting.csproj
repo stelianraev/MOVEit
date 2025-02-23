@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>c8c4ec93-9266-4019-8608-603552297bd0</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\MoveitApi\MoveitApi.csproj" />
+    <ProjectReference Include="..\src\MoveitClient\MoveitClient.csproj" />
+    <ProjectReference Include="..\src\MoveitDesktopUI\MoveitDesktopUI.csproj" />
+    <ProjectReference Include="..\src\MoveitFileObserverService\MoveitFileObserverService.csproj" />
+  </ItemGroup>
+
+</Project>

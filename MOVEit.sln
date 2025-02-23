@@ -5,13 +5,13 @@ VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveitFileObserverService", "src\MoveitFileObserverService\MoveitFileObserverService.csproj", "{C2A3ABC6-55D8-4CEA-85F2-A317AADBE3F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost", "src\MoveitAspire\AppHost.csproj", "{34D8B48E-DB0A-4C68-9B3F-BF9AB47D5CE9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveitApiClient", "src\MoveitApiClient\MoveitApiClient.csproj", "{7D8E858B-D430-47C0-9282-93CC33826931}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveitClient", "src\MoveitClient\MoveitClient.csproj", "{7D8E858B-D430-47C0-9282-93CC33826931}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveitApi", "src\MoveitApi\MoveitApi.csproj", "{EEC3D169-44D1-4019-ADBF-B29193125F7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveitDesktopUI", "MoveitDesktopUI\MoveitDesktopUI.csproj", "{97DE7390-B774-4728-916A-216C8C19D169}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveitDesktopUI", "src\MoveitDesktopUI\MoveitDesktopUI.csproj", "{97DE7390-B774-4728-916A-216C8C19D169}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireHosting", "AspireHosting\AspireHosting.csproj", "{8CC88FAC-8FDB-41D3-8E5C-D4384926D2DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,6 @@ Global
 		{C2A3ABC6-55D8-4CEA-85F2-A317AADBE3F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2A3ABC6-55D8-4CEA-85F2-A317AADBE3F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2A3ABC6-55D8-4CEA-85F2-A317AADBE3F8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{34D8B48E-DB0A-4C68-9B3F-BF9AB47D5CE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{34D8B48E-DB0A-4C68-9B3F-BF9AB47D5CE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{34D8B48E-DB0A-4C68-9B3F-BF9AB47D5CE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{34D8B48E-DB0A-4C68-9B3F-BF9AB47D5CE9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D8E858B-D430-47C0-9282-93CC33826931}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D8E858B-D430-47C0-9282-93CC33826931}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D8E858B-D430-47C0-9282-93CC33826931}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +35,10 @@ Global
 		{97DE7390-B774-4728-916A-216C8C19D169}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97DE7390-B774-4728-916A-216C8C19D169}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97DE7390-B774-4728-916A-216C8C19D169}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CC88FAC-8FDB-41D3-8E5C-D4384926D2DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CC88FAC-8FDB-41D3-8E5C-D4384926D2DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CC88FAC-8FDB-41D3-8E5C-D4384926D2DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CC88FAC-8FDB-41D3-8E5C-D4384926D2DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

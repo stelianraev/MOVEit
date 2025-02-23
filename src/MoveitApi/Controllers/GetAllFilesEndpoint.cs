@@ -24,7 +24,7 @@ namespace MoveitApi.Controllers
             if (string.IsNullOrWhiteSpace(accessToken))
             {
                 return Results.Unauthorized();
-            }               
+            }
 
             try
             {
@@ -44,21 +44,7 @@ namespace MoveitApi.Controllers
                 return Results.StatusCode(500);
             }
         }
-    }   
+    }
 
     public record GetAllFilesRequest(int Page, int PerPage, string SortField, string SortDirection, bool? NewOnly, string SinceDate);
-
-    //public class GetAllFilesRequestValidator : AbstractValidator<GetAllFilesRequest>
-    //{
-    //    public GetAllFilesRequestValidator()
-    //    {
-    //        RuleFor(x => x.Page)
-    //         .Must(x => x >= 0)
-    //         .WithMessage("Page must be positive number");
-
-    //        RuleFor(x => x.PerPage)
-    //         .Must(x => x >= 0)
-    //         .WithMessage("PerPage must be positive number");
-    //    }
-    //}
 }

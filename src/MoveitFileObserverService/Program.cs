@@ -7,11 +7,12 @@ public static class Program
     {
         var builder = Host.CreateApplicationBuilder(args);
 
-        builder.Services.Configure<ServiceConfig>(builder.Configuration.GetSection("FileObserverServiceConfig"));
+        builder.Services.Configure<ServiceConfig>(builder.Configuration.GetSection("ServiceConfig"));
 
-        builder.Services.AddHostedService<Worker>();
+        builder.Services.AddHostedService<FileChangeWorker>();
 
         var host = builder.Build();
+
         host.Run();
     }
 }
