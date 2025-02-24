@@ -10,7 +10,7 @@
     {
         public static class TokenStorage
         {
-            private static readonly string AccessTokenFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MyAppAccessToken.dat");
+            private static readonly string AccessTokenFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MoveitAccessToken.dat");
 
             public static void SaveAccessToken(string token, DateTime expiresDateTime)
             {
