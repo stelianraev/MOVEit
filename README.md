@@ -72,3 +72,16 @@
 3. MinimalApi (MoveitApi) - *The Api idea is to give us decoupling from real MoveitApi, so we can easy extend the logic of the product, for example if want to keep some analytcs of usage, store data, transform it or even implement different cloud storage provide as AWS or Amazon.<br/> At current implementation MoveitApi is using MoveitClent (*Class Library*) as MoveitClient give us easy access to real MoveitAPI. In MoveitApi is used SignalR registration, to be able to notify when file is Updated/Created or Deleted so UI and the cliend can get updte in real time.<br/> At the moment there is only two notifictions = "FileUploaded" and "FileDeleted"* <br/>
 4. MoveitClient (Class Library) - *Helper for Moveit integration, could be a nuget and used for multiple services if needed.* <br/>
 5. *.Net Aspire - Local hosting container. Easy to run all services at once and keep traking logs and metrics.* <br/>
+
+🚀Improvements:
+<br/>
+🔹 Loging in WPF service, not logged with ConoleWriteline  <br/>
+🔹 Better loging in API service <br/>
+🔹 Better logging in FileObservableService <br/>
+🔹 Add monitoring as Prometheus <br/>
+🔹 Add Logic when token expire Background service stop looking the local folder, until next successfully authentication as I mentioned above <br/>
+🔹 BackgroundService if observing is stopped to retrict folder access to read only, so if there is not restriction on current logic the customer could add files to folder but they will be never sync or add EventBrokr to handle all events in a quequ as Kafka, RabbitMQ or etc. Possible             triggers for this bug - Api is dowon, User is unauthenticated but could add files in a local folder, MoveitApi is down and integration could not be established and etc  <br/>
+🔹 Adding retry mechanim in Background service if response from our api is failed, or some token problem. Retry Mechanism t UI if SignalR is down, or bad response. Add RetryMechanism to our API, to handle if we hit some limits or temporary problem with MOVEit. Could be used Polly for             retry <br/>
+🔹 Add E2E and Automation and Integration test <br/>
+🔹 Refactoring some code is dublicated can be more abstract <br/>
+🔹 For sure there is a lot more improvements, if more than one head think on it <br/>
