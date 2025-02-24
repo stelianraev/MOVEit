@@ -77,50 +77,50 @@
  🔹 Home View without files View: <br/> <img src="https://github.com/user-attachments/assets/84988926-60fa-4505-b903-f28ce11051b8" alt="Login view" width="300" height="200">  *#There is a pop up message when no files found in remote folder* <br/>
  🔹 Home View **with** files View: <br/> <img src="https://github.com/user-attachments/assets/b2e98a64-261b-4f5b-940f-cb645fe81767" alt="Login view" width="300" height="200"> <br/>
 
-2. FileObserverService - *It is a Background service, witch listen for any local flder changes. The specified local folder is C:\\MOVEit (*if folder doesnt exist, he service will create it*), At the moment BackGroundService is listening for FileCreatee and FileDelete. FileObserverService, can listen for multiple file changes as many files are created, or deleted. To be sure each file process will be finished is used Semaphore. In the service also have TokenStorage, witch can say when token is expired service stop listen for any changes and to block folder access, as can set access to **READ ONLY** (Future implementation).* <br/>
- 🔹 Purpose: Monitors C:\MOVEit folder (created automatically if missing)<br/>
+2. FileObserverService - *A background service that listens for any changes in the local folder. The specified local folder is C:\MOVEit (if the folder does not exist, the service will create it). Currently, the Background Service listens for file creation and file deletion events. FileObserverService can detect multiple file changes as files are created or deleted. To ensure each file process completes properly, a Semaphore is used. The service also includes TokenStorage, which determines when a token has expired. If the token expires, the service stops listening for changes and blocks folder access by setting it to read-only (future implementation).* <br/>
+ 🔹 Purpose: Monitors the C:\MOVEit folder (automatically created if missing). <br/>
  🔹 Monitored Events:<br/>
-        ✅ File Created - Triggers an upload<br/>
-        ✅ File Deleted - Triggers a delete request<br/>
+ &nbsp;&nbsp;&nbsp;&nbsp; ✅ File Created - Triggers an upload <br/>
+ &nbsp;&nbsp;&nbsp;&nbsp; ✅ File Deleted - Triggers a delete request <br/>
  🔹 Concurrency Handling: Uses Semaphore to manage multiple file changes efficiently <br/>
 
-3. MinimalApi (MoveitApi) - *The Api idea is to give us decoupling from real MoveitApi, so we can easy extend the logic of the product, for example if want to keep some analytcs of usage, store data, transform it or even implement different cloud storage provide as AWS or Amazon.<br/> At current implementation MoveitApi is using MoveitClent (*Class Library*) as MoveitClient give us easy access to real MoveitAPI. In MoveitApi is used SignalR registration, to be able to notify when file is Updated/Created or Deleted so UI and the cliend can get updte in real time.<br/> At the moment there is only two notifictions = "FileUploaded" and "FileDeleted"* <br/>
+3. Minimal API (MoveitApi) - *The MoveitApi serves as a middleware layer, decoupling the real Moveit API from other services. This allows for easier expansion of the product’s logic, such as analytics tracking, data storage, transformation, or integration with different cloud storage providers (e.g., AWS, Azure). <br/> Currently, MoveitApi uses MoveitClient (Class Library) for seamless access to the real Moveit API. SignalR is implemented for real-time notifications when a file is updated, created, or deleted, ensuring that both the UI and the client receive updates in real time.* <br/>
 🔹 Acts as a Middleware API - Decouples MoveitAPI from the UI & File Observer <br/>
 🔹 Allows Easy Future Expansion (e.g., Analytics, Multi-Cloud Support) <br/>
 🔹 Implements SignalR Notifications <br/>
-        📢 "FileUploaded" Event <br/>
-        📢 "FileDeleted" Event <br/>
+ &nbsp;&nbsp;&nbsp;&nbsp; 📢 "FileUploaded" Event <br/>
+ &nbsp;&nbsp;&nbsp;&nbsp; 📢 "FileDeleted" Event <br/>
 <br/>
 
-4. MoveitClient (Class Library) - *Helper for Moveit integration, could be a nuget and used for multiple services if needed.* <br/>
-🔹 Helper for Moveit API Integration <br/>
-🔹 Could be turned into a NuGet package for multiple service integrations <br/>
+4. MoveitClient (Class Library) - *A helper library for Moveit API integration. It could be packaged as a NuGet library to be reused across multiple services.* <br/>
+🔹 Provides seamless Moveit API integration. <br/>
+🔹 Can be converted into a NuGet package for multiple service integrations. <br/>
 <br/>
 
-5. *.Net Aspire - Local hosting container. Easy to run all services at once and keep traking logs and metrics.* <br/>
-🔹 Service Container for running all services at once <br/>
-🔹 Provides logging, monitoring, and observability <br/>
+5. .Net Aspire - *A local hosting container that simplifies running all services at once while keeping track of logs and metrics.* <br/>
+🔹 Service container for running all services simultaneously. <br/>
+🔹 Provides logging, monitoring, and observability. <br/>
 
-**🚀Improvements:**
-✅ Refactor Logging: <br/>
-🔹 Improve WPF Logging (currently using Console.WriteLine) <br/>
-🔹 Implement Structured Logging in API & Background Service <br/>
+**🚀Improvements:** <br/>
+&nbsp;✅ Refactor Logging: <br/>
+&nbsp;&nbsp;🔹 Improve WPF Logging (currently using Console.WriteLine) <br/>
+&nbsp;&nbsp;🔹 Implement Structured Logging in API & Background Service <br/>
 <br/>
-✅ Monitoring & Observability: <br/>
-🔹 Integrate Prometheus / Grafana for real-time metrics & logging <br/>
+&nbsp;✅ Monitoring & Observability: <br/>
+&nbsp;&nbsp;🔹 Integrate Prometheus / Grafana for real-time metrics & logging <br/>
 <br/>
-✅ Enhanced Security & Reliability: <br/>
-🔹 Implement retry mechanisms using Polly for API & SignalR failures
-🔹 UI Retries if SignalR goes down <br/>
-🔹 API retry logic for handling Moveit API Rate Limits<br/>
+&nbsp;✅ Enhanced Security & Reliability: <br/>
+&nbsp;&nbsp;🔹 Implement retry mechanisms using Polly for API & SignalR failures
+&nbsp;&nbsp;🔹 UI Retries if SignalR goes down <br/>
+&nbsp;&nbsp;🔹 API retry logic for handling Moveit API Rate Limits<br/>
 <br/>
-✅ Background Service Enhancements: <br/>
-🔹 Stop folder monitoring if token expires <br/>
-🔹 Restrict folder to Read-Only when unauthorized <br/>
+&nbsp;✅ Background Service Enhancements: <br/>
+&nbsp;&nbsp;🔹 Stop folder monitoring if token expires <br/>
+&nbsp;&nbsp;🔹 Restrict folder to Read-Only when unauthorized <br/>
 <br/>
-✅ Testing & Automation: <br/>
-🔹 Add End-to-End (E2E) Tests <br/>
-🔹 Expand Unit Tests & Integration Tests <br/>
+&nbsp;✅ Testing & Automation: <br/>
+&nbsp;&nbsp;🔹 Add End-to-End (E2E) Tests <br/>
+&nbsp;&nbsp;🔹 Expand Unit Tests & Integration Tests <br/>
 <br/>
-✅ Future Cloud Storage Support: <br/>
-🔹 AWS S3, Azure Blob Storage, or Google Drive <br/>
+&nbsp;✅ Future Cloud Storage Support: <br/>
+&nbsp;&nbsp;🔹 AWS S3, Azure Blob Storage, or Google Drive <br/>
