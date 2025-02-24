@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MoveitApi.Helper;
 using MoveitClient;
+using MoveitClient.Models.ResponseModels;
 using static MoveitApi.Controllers.GetTokenEndpoint;
 
 namespace MoveitApi.Controllers
@@ -10,7 +11,8 @@ namespace MoveitApi.Controllers
     {
         public void Map(IEndpointRouteBuilder app)
         {
-            app.MapPost("/authenticate/token", GetTokenAsync);
+            app.MapPost("/authenticate/token", GetTokenAsync)
+                .Produces<TokenResponse>(StatusCodes.Status200OK);
         }
 
         public async Task<IResult> GetTokenAsync([FromBody] TokenRequest tokenRequest,

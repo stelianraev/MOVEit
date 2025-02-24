@@ -12,6 +12,7 @@ namespace MoveitApi.Controllers
         public void Map(IEndpointRouteBuilder app)
         {
             app.MapPost("/files/upload", UploadFilesAsync)
+                .Produces<HttpResponseMessage>(StatusCodes.Status200OK)
                 .Accepts<UploadFilesRequest>("multipart/form-data")
                 .WithMetadata(new IgnoreAntiforgeryTokenAttribute())
                 .DisableAntiforgery();

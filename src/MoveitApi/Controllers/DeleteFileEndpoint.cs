@@ -11,7 +11,8 @@ namespace MoveitApi.Controllers
     {
         public void Map(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/files/delete", DeleteFile);
+            app.MapDelete("/files/delete", DeleteFile)
+                .Produces<HttpResponseMessage>(StatusCodes.Status200OK);
         }
         public async Task<IResult> DeleteFile([FromHeader(Name = "X-Auth-Token")] string accessToken,
                                               [FromQuery] string fileId,

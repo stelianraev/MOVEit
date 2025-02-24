@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MoveitApi.Helper;
 using MoveitClient;
+using MoveitClient.Models.ResponseModels;
 using Newtonsoft.Json;
 
 namespace MoveitApi.Controllers
@@ -9,7 +10,8 @@ namespace MoveitApi.Controllers
     {
         public void Map(IEndpointRouteBuilder app)
         {
-            app.MapGet("/files/getall", GetAllFiles);
+            app.MapGet("/files/getall", GetAllFiles)
+                .Produces<GetFilesResponse>(StatusCodes.Status200OK);
         }
 
         public async Task<IResult> GetAllFiles([FromHeader(Name = "X-Auth-Token")] string accessToken,
