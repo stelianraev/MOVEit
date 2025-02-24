@@ -1,7 +1,11 @@
-﻿namespace MoveitDesktopUI.Models
+﻿using Newtonsoft.Json;
+
+namespace MoveitDesktopUI.Models
 {
     public class RevokeTokenResponse
     {
-       public string Token { get; set; }
+       public string Message { get; set; }
+
+       public string StatusCode { get; set; }
     }
 }

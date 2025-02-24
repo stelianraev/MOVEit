@@ -10,7 +10,7 @@
     {
         public static class TokenStorage
         {
-            private static readonly string AccessTokenFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MyAppAccessToken.dat");
+            private static readonly string AccessTokenFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MoveitAccessToken.dat");
 
             public static void SaveAccessToken(string token, int tokenExpireSeconds, string refreshToken, DateTime expiresDateTime)
             {
@@ -24,7 +24,9 @@
             public static TokenData GetAccessToken()
             {
                 if (!File.Exists(AccessTokenFilePath))
+                {
                     return null;
+                }
 
                 byte[] encryptedData = File.ReadAllBytes(AccessTokenFilePath);
                 byte[] decryptedData = ProtectedData.Unprotect(encryptedData, null, DataProtectionScope.CurrentUser);

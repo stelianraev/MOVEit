@@ -194,16 +194,21 @@ namespace MoveitDesktopUI
 
                     if (!accessToken.IsTokenValid)
                     {
-                        if (accessToken.Token != null)
+                        if (accessToken.Token == null)
+                        {
+                            await Task.Delay(TimeSpan.FromSeconds(20));
+                            continue;
+                        }
+                        else
                         {
                             var revokeTokenResponse = await RevokeTokenAsync(accessToken!.Token!.AccessToken);
                             var responseContent = await revokeTokenResponse.Content.ReadAsStringAsync();
-                            var newToken = JsonConvert.DeserializeObject<RevokeTokenResponse>(responseContent);
+                            var isTokenRevoked = JsonConvert.DeserializeObject<RevokeTokenResponse>(responseContent);
 
-                            if (newToken != null && !string.IsNullOrEmpty(newToken.Token))
+                            if (isTokenRevoked != null && isTokenRevoked.StatusCode == "200")
                             {
-                                TokenStorage.RemoveAccessToken();
-                                TokenStorage.SaveAccessToken(newToken.Token, accessToken.Token.TokenExpireSeconds, accessToken.Token.RefreshToken, DateTime.UtcNow.AddSeconds(accessToken.Token.TokenExpireSeconds));
+                                var revokeToken = TokenStorage.GetAccessToken();
+                                TokenStorage.SaveAccessToken(revokeToken.AccessToken, revokeToken.TokenExpireSeconds, revokeToken.RefreshToken, DateTime.UtcNow.AddSeconds(revokeToken.TokenExpireSeconds));
                             }
                         }
                     }
@@ -217,9 +222,12 @@ namespace MoveitDesktopUI
             }
         }
 
-        private async Task<HttpResponseMessage> RevokeTokenAsync(string refreshToken)
+        private async Task<HttpResponseMessage> RevokeTokenAsync(string token)
         {
-            var requestData = new RevokeTokenResponse { Token = refreshToken };
+            var requestData = new Dictionary<string, string>
+                {
+                      { "token", token }
+                };
 
             var json = JsonConvert.SerializeObject(requestData);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -241,7 +249,7 @@ namespace MoveitDesktopUI
                 }
                 else
                 {
-                    return (false, null);
+                    return (false, token);
                 }
             }
 
