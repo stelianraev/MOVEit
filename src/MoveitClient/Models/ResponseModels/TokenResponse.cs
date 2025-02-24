@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace MoveitApiClient.Models.Responses
+namespace MoveitClient.Models.ResponseModels
 {
     public class TokenResponse
     {

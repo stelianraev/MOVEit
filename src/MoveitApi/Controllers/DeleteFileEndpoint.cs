@@ -1,9 +1,9 @@
-﻿using FluentValidation;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using MoveitApi.Helper;
 using MoveitApi.SignalR;
-using MoveitApiClient;
-using Movit.API.Helper;
+using MoveitClient;
 
 namespace MoveitApi.Controllers
 {
@@ -16,7 +16,7 @@ namespace MoveitApi.Controllers
         public async Task<IResult> DeleteFile([FromHeader(Name = "X-Auth-Token")] string accessToken,
                                               [FromQuery] string fileId,
                                               CancellationToken cancellationToken,
-                                              MoveitClient movitClient,
+                                              IClient movitClient,
                                               [FromServices] IHubContext<FileObserverHub> hubContext)
         {
             if (string.IsNullOrWhiteSpace(accessToken))
@@ -30,7 +30,7 @@ namespace MoveitApi.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    await hubContext.Clients.All.SendAsync("FileChanged", fileId);
+                    await hubContext.Clients.All.SendAsync("FileDeleted", fileId);
                     return Results.Ok(responseBody);
                 }
                 else

@@ -1,4 +1,4 @@
-﻿namespace FileObserverService.Models.Configuration
+﻿namespace MoveitFileObserverService.Models.Configuration
 {
     public class ServiceConfig
     {

@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http.Features;
 using MoveitApi.SignalR;
-using MoveitApiClient;
-using MoveitApiClient.Models;
+using MoveitClient;
+using MoveitClient.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,10 +18,10 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 builder.Services.AddControllers();
-builder.Services.AddHttpClient<MoveitClient>();
+builder.Services.AddHttpClient<IClient>();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<MoveitClient>();
+builder.Services.AddTransient<IClient, Client>();
 builder.Services.AddSingleton<CancellationTokenSource>();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 

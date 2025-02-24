@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MoveitApiClient;
-using Movit.API.Helper;
+using MoveitApi.Helper;
+using MoveitClient;
+using Newtonsoft.Json;
 
 namespace MoveitApi.Controllers
 {
@@ -13,7 +14,7 @@ namespace MoveitApi.Controllers
 
         public async Task<IResult> GetAllFiles([FromHeader(Name = "X-Auth-Token")] string accessToken,
                                                CancellationToken cancellationToken,
-                                               MoveitClient movitClient,
+                                               IClient movitClient,
                                                [FromQuery] int page = 1,
                                                [FromQuery] int perPage = 1000,
                                                [FromQuery] string? sortField = "path",
@@ -36,7 +37,7 @@ namespace MoveitApi.Controllers
                                                                   sinceDate,
                                                                   accessToken);
 
-
+                
                 return Results.Ok(response);
             }
             catch (Exception ex)
@@ -45,6 +46,6 @@ namespace MoveitApi.Controllers
             }
         }
     }
-
+        
     public record GetAllFilesRequest(int Page, int PerPage, string SortField, string SortDirection, bool? NewOnly, string SinceDate);
 }

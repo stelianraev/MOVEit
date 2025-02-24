@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -12,9 +10,6 @@ namespace MoveitDesktopUI.Services
     {
         private readonly TreeView _fileTree = fileTree ?? throw new ArgumentNullException(nameof(fileTree));
 
-        /// <summary>
-        /// Loads the specified folder into the TreeView.
-        /// </summary>
         public void LoadSpecificFolder(string folderPath)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -42,28 +37,11 @@ namespace MoveitDesktopUI.Services
                 Header = CreateHeader(GetFolderDisplayText(folderPath), folderIcon),
                 Tag = folderPath,
                 IsExpanded = true
-
             };
 
-            // Add dummy item for lazy loading
-            //item.Items.Add("Loading...");
-            //item.Expanded += (s, e) => TreeViewItem_Expanded(s, e, folderPath);
+            LoadSubfoldersAndFiles(item, folderPath);
 
             return item;
-        }
-
-        private void TreeViewItem_Expanded(object sender, RoutedEventArgs e, string folderPath)
-        {
-            if (sender is TreeViewItem item)
-            {
-                if (string.IsNullOrEmpty(folderPath)) return;
-
-                if (item.Items.Count == 1 && item.Items[0] is string loadingText && loadingText == "Loading...")
-                {
-                    item.Items.Clear();
-                    LoadSubfoldersAndFiles(item, folderPath);
-                }
-            }
         }
 
         private void LoadSubfoldersAndFiles(TreeViewItem parentItem, string folderPath)

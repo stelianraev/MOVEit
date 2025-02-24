@@ -31,7 +31,7 @@ namespace MoveitDesktopUI.Services
             {
                 Header = "Remote Files",
                 Tag = "/",
-                IsExpanded = true // ✅ Always expanded
+                IsExpanded = true
             };
 
             foreach (var file in remoteFiles.OrderBy(x => x.Path))
@@ -84,7 +84,7 @@ namespace MoveitDesktopUI.Services
 
         private TreeViewItem CreateTreeViewItemForRemoteFile(Item file)
         {
-            var fileIcon = IconExtractor.GetIcon(System.IO.Path.GetExtension(file.Name), smallIcon: true);
+            var fileIcon = IconExtractor.GetIcon(file.Path, smallIcon: true);
             string displayText = $"{file.Name} ({FormatBytes(file.Size)})";
             return new TreeViewItem
             {

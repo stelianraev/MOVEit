@@ -3,9 +3,6 @@ using System.Windows;
 
 namespace MoveitDesktopUI
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
         private ServiceProvider _serviceProvider;

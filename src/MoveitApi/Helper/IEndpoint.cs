@@ -1,4 +1,4 @@
-﻿namespace Movit.API.Helper
+﻿namespace MoveitApi.Helper
 {
     public interface IEndpoint
     {

@@ -1,5 +1,5 @@
-using FileObserverService;
-using FileObserverService.Models.Configuration;
+using MoveitFileObserverService;
+using MoveitFileObserverService.Models.Configuration;
 
 public static class Program
 {

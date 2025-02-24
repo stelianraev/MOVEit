@@ -1,4 +1,4 @@
-﻿namespace MoveitApiClient.Models.Responses
+﻿namespace MoveitClient.Models.ResponseModels
 {
     public class RevokeTokenResponse
     {

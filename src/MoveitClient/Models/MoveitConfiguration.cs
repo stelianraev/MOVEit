@@ -1,8 +1,8 @@
-﻿namespace MoveitApiClient.Models
+﻿namespace MoveitClient.Models
 {
     public class MoveitConfiguration
     {
-        public string? BaseUrl {  get; set; }
+        public string? BaseUrl { get; set; }
 
         public int MaxAlloweedContentLenght { get; set; }
     }

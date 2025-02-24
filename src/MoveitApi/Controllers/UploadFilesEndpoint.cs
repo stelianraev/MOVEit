@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using MoveitApi.Helper;
 using MoveitApi.SignalR;
-using MoveitApiClient;
-using Movit.API.Helper;
+using MoveitClient;
 
 namespace MoveitApi.Controllers
 {
@@ -18,7 +18,7 @@ namespace MoveitApi.Controllers
         }
 
         public async Task<IResult> UploadFilesAsync([FromForm] UploadFilesRequest uploadFilesRequest,
-            MoveitClient movitClient,
+            IClient movitClient,
             [FromServices] IValidator<UploadFilesRequest> validator,
             [FromServices] IHubContext<FileObserverHub> hubContext,
             CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ namespace MoveitApi.Controllers
 
                 var response = await movitClient.UploadFileAsync(uploadFilesRequest.FolderId, stream, uploadFilesRequest.File.FileName, uploadFilesRequest.AccessToken);
 
-                await hubContext.Clients.All.SendAsync("FileChanged", uploadFilesRequest.File.FileName);
+                await hubContext.Clients.All.SendAsync("FileUploaded", uploadFilesRequest.File.FileName);
 
                 return Results.Ok(response);
             }

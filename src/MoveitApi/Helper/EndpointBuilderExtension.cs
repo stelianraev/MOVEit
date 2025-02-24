@@ -1,4 +1,4 @@
-﻿using Movit.API.Helper;
+﻿using MoveitApi.Helper;
 using System.Reflection;
 
 public static class EndpointBuilderExtension

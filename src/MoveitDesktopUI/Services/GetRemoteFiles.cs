@@ -23,8 +23,8 @@ namespace MoveitDesktopUI.Services
                 var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7040/files/getall?page={page}&perPage={perPage}");
                 request.Headers.Add("X-Auth-Token", token);
 
-                var response = await _httpClient.SendAsync(request, _cancellationToken)/*.ConfigureAwait(false)*/;
-                var content = await response.Content.ReadAsStringAsync()/*.ConfigureAwait(false)*/;
+                var response = await _httpClient.SendAsync(request, _cancellationToken);
+                var content = await response.Content.ReadAsStringAsync();
                 var remoteFiles = JsonConvert.DeserializeObject<GetFilesResponse>(content);
 
                 return remoteFiles;

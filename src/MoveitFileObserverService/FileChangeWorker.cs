@@ -1,12 +1,12 @@
-using FileObserverService.Models.Configuration;
 using Microsoft.Extensions.Options;
 using MoveitFileObserverService.Models;
+using MoveitFileObserverService.Models.Configuration;
 using MoveitWpf.MoveitFileOberverService.Services;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
 using System.Net.Http.Headers;
 
-namespace FileObserverService
+namespace MoveitFileObserverService
 {
     public class FileChangeWorker : BackgroundService
     {
@@ -87,7 +87,7 @@ namespace FileObserverService
 
                 _isProcessingFiles = false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Processing file error: {ex.Message}");
             }
@@ -95,7 +95,7 @@ namespace FileObserverService
             {
                 _queueSemaphore.Release();
             }
-           
+
         }
 
 
@@ -187,7 +187,7 @@ namespace FileObserverService
                 _logger.LogError(ex, $"[DeleteFile] Error deleting file: {fileName}");
             }
         }
-                
+
         private void OnFileCreated(object sender, FileSystemEventArgs e)
         {
             try

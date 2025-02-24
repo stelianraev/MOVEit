@@ -1,6 +1,4 @@
-﻿using Movit.API.Exceptions;
-
-namespace MoveitApi.Exceptions
+﻿namespace MoveitApi.Exceptions
 {
     public class AuthenticationException : MoveitException
     {

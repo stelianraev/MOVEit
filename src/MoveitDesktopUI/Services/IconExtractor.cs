@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -10,8 +10,10 @@ namespace MoveitDesktopUI.Services
     public static class IconExtractor
     {
         private const uint SHGFI_ICON = 0x100;
-        private const uint SHGFI_SMALLICON = 0x1;  // small icon
-        private const uint SHGFI_LARGEICON = 0x0;  // large icon
+        private const uint SHGFI_SMALLICON = 0x1;
+        private const uint SHGFI_LARGEICON = 0x0;
+        private const uint SHGFI_USEFILEATTRIBUTES = 0x10;
+        private const uint FILE_ATTRIBUTE_DIRECTORY = 0x10;
 
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SHGetFileInfo(
@@ -39,9 +41,12 @@ namespace MoveitDesktopUI.Services
         public static ImageSource GetIcon(string path, bool smallIcon = true)
         {
             SHFILEINFO shinfo = new SHFILEINFO();
-            uint flags = SHGFI_ICON | (smallIcon ? SHGFI_SMALLICON : SHGFI_LARGEICON);
+            uint flags = SHGFI_ICON | SHGFI_USEFILEATTRIBUTES | (smallIcon ? SHGFI_SMALLICON : SHGFI_LARGEICON);
 
-            IntPtr hImg = SHGetFileInfo(path, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
+            uint fileAttributes = Directory.Exists(path) ? FILE_ATTRIBUTE_DIRECTORY : 0;
+            string lookupPath = Directory.Exists(path) ? path : path;
+
+            IntPtr hImg = SHGetFileInfo(lookupPath, fileAttributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
             if (hImg == IntPtr.Zero)
                 return null;
 
@@ -53,5 +58,6 @@ namespace MoveitDesktopUI.Services
             DestroyIcon(shinfo.hIcon);
             return icon;
         }
+
     }
 }

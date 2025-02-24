@@ -1,25 +1,24 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MoveitApiClient.Models;
-using MoveitApiClient.Models.ResponseModels;
-using MoveitApiClient.Models.Responses;
+using MoveitClient.Models;
+using MoveitClient.Models.ResponseModels;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Web;
 
-namespace MoveitApiClient
+namespace MoveitClient
 {
-    public class MoveitClient
+    public class Client : IClient
     {
         private readonly HttpClient _httpClient;
         private readonly IHttpClientFactory _clientFactory;
-        private readonly ILogger<MoveitClient> _logger;
+        private readonly ILogger<Client> _logger;
         private readonly MoveitConfiguration _config;
         private readonly CancellationToken _cancelationToken;
 
-        public MoveitClient(IHttpClientFactory clientFactory, ILogger<MoveitClient> logger, IOptions<MoveitConfiguration> config, CancellationTokenSource cancellationTokenSource)
+        public Client(IHttpClientFactory clientFactory, ILogger<Client> logger, IOptions<MoveitConfiguration> config, CancellationTokenSource cancellationTokenSource)
         {
             _clientFactory = clientFactory;
             _logger = logger;
@@ -123,9 +122,9 @@ namespace MoveitApiClient
 
 
         public async Task<HttpResponseMessage> UploadFileAsync(string folderId,
-                                                              Stream fileStrem,
-                                                              string fileName,
-                                                              string accessToken)
+                                                               Stream fileStrem,
+                                                               string fileName,
+                                                               string accessToken)
         {
             fileStrem.Seek(0, SeekOrigin.Begin);
             var fileSize = fileStrem.Length;
@@ -148,7 +147,7 @@ namespace MoveitApiClient
             return await UploadFileSingleAsync(folderId, fileStrem, fileName, "sha-256", hashValue, accessToken);
         }
 
-        private async Task<HttpResponseMessage> UploadFileSingleAsync(string folderId,
+        public async Task<HttpResponseMessage> UploadFileSingleAsync(string folderId,
                                                                      Stream file,
                                                                      string fileName,
                                                                      string hashType,
@@ -184,7 +183,7 @@ namespace MoveitApiClient
             return response;
         }
 
-        private bool IsFileSizeExceedLimits(Stream file)
+        public bool IsFileSizeExceedLimits(Stream file)
         {
             // Get length of file in bytes
             long fileSizeInBytes = file.Length;

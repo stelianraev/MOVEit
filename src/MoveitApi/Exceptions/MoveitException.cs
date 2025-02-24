@@ -1,4 +1,4 @@
-﻿namespace Movit.API.Exceptions
+﻿namespace MoveitApi.Exceptions
 {
     public class MoveitException : Exception
     {

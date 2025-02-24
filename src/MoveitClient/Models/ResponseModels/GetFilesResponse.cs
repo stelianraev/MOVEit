@@ -1,4 +1,4 @@
-﻿namespace MoveitApiClient.Models.ResponseModels
+﻿namespace MoveitClient.Models.ResponseModels
 {
     public class GetFilesResponse
     {

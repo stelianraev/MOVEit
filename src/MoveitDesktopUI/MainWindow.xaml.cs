@@ -43,7 +43,8 @@ namespace MoveitDesktopUI
                 .WithAutomaticReconnect()
                 .Build();
 
-            _hubConnection.On<string>("FileChanged", async (message) =>
+            //Get notification when a file is uploaded
+            _hubConnection.On<string>("FileUploaded", async (message) =>
             {
                 var accesstoken = TokenStorage.GetAccessToken()?.AccessToken;
 
@@ -52,7 +53,23 @@ namespace MoveitDesktopUI
                     return;
                 }
 
-                var remoteFiles = await _remoteFiles.GetRemoteFilesAsync(0, 1000, accesstoken);
+                var remoteFiles = await _remoteFiles.GetRemoteFilesAsync(1, 1000, accesstoken);
+                _localFilesObserver.LoadSpecificFolder(_baseFolder);
+                await _remoteFileObserver.RemoteResponseObserverAsync(remoteFiles);
+            });
+
+            //Get notification when a file is uploaded
+            _hubConnection.On<string>("FileDeleted", async (message) =>
+            {
+                var accesstoken = TokenStorage.GetAccessToken()?.AccessToken;
+
+                if (String.IsNullOrEmpty(accesstoken))
+                {
+                    return;
+                }
+
+                var remoteFiles = await _remoteFiles.GetRemoteFilesAsync(1, 1000, accesstoken);
+                await Dispatcher.InvokeAsync(() => RemoteFileTree.Items.Clear());
                 _localFilesObserver.LoadSpecificFolder(_baseFolder);
                 await _remoteFileObserver.RemoteResponseObserverAsync(remoteFiles);
             });

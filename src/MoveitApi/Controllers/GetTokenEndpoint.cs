@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using MoveitApiClient;
-using Movit.API.Helper;
-using static Movit.API.Controllers.GetTokenEndpoint;
+using MoveitApi.Helper;
+using MoveitClient;
+using static MoveitApi.Controllers.GetTokenEndpoint;
 
-namespace Movit.API.Controllers
+namespace MoveitApi.Controllers
 {
     public class GetTokenEndpoint : IEndpoint
     {
@@ -14,11 +14,11 @@ namespace Movit.API.Controllers
         }
 
         public async Task<IResult> GetTokenAsync([FromBody] TokenRequest tokenRequest,
-            MoveitClient movitClient,
+            IClient movitClient,
             [FromServices] IValidator<TokenRequest> validator,
             CancellationToken cancellationToken)
         {
-            await validator.ValidateAndThrowAsync(tokenRequest, cancellationToken);           
+            await validator.ValidateAndThrowAsync(tokenRequest, cancellationToken);
 
             try
             {

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using MoveitApiClient;
-using Movit.API.Helper;
+using MoveitApi.Helper;
+using MoveitClient;
 using static MoveitApi.Controllers.RevokeTokenEndpoint;
 
 namespace MoveitApi.Controllers
@@ -14,7 +14,7 @@ namespace MoveitApi.Controllers
         }
 
         public async Task<IResult> RevokeTokenAsync([FromBody] RevokeTokenRequest revokeTokenRequest,
-            MoveitClient movitClient,
+            IClient movitClient,
             [FromServices] IValidator<RevokeTokenRequest> validator,
             CancellationToken cancellationToken)
         {
