@@ -32,7 +32,7 @@
     🔹 Visual Studio 2022 (latest version) <br>
     <br/>
     
-**▶ Running the Application**
+**▶ Running the Application** <br/>
     🔹 Set AspireHosting as the startup project in Visual Studio <br/>
     🔹 Run the project, and it will start all services automatically<br/>
     🔹 Open Swagger UI at [http://localhost:{PORT}/swagger](https://localhost:7040/swagger/index.html) to test the API<br/>
