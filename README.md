@@ -64,13 +64,13 @@
  <br/>
 
 💡**Short Service Summary**  <br/>
-1. **WPF UI Service** - *It is an entry point where user is getting authenticated and can monitor in real time what have in a local folder and what is having on cloud (remote) folder. In real time can monitor if add one or many files in local folder, how it is going to cloud, or the same when delete something in a local.* <br/>
- 🔹 Entry Point: Allows users to authenticate, and view local & remote files in real-time <br/>
- 🔹 Real-Time Monitoring: Watches for file uploads & deletions locally and syncs with the cloud <br/>
- 🔹 Authentication: Implements Token Authentication & Token Revocation <br/>
- 🔹 Token Storage: Stored in C:\Users\{your_user}\AppData\Roaming\MoveitAccessToken.dat <br/>
+1. **WPF UI Service** - *This is the entry point where users authenticate and monitor, in real time, the contents of both a local folder and a cloud (remote) folder. Users can observe changes as files are added or deleted locally and see       how these changes sync with the cloud.* <br/>
+ 🔹 Entry Point: Allows users to authenticate and view local & remote files in real time. <br/>
+ 🔹 Real-Time Monitoring: Tracks file uploads and deletions locally and syncs them with the cloud. <br/>
+ 🔹 Authentication: Implements Token Authentication and Token Revocation. <br/>
+ 🔹 Token Storage: Stored at C:\Users\{your_user}\AppData\Roaming\MoveitAccessToken.dat <br/>
 
-    *In UI Servce is implemented Token authentication also Token Revoke mechanism, so when the token expire will be revoked and user ill see login screen again. There will be need new authentication using username and password (Username and Password are provided by     MOVEit support). The Token is keeped locally on the machine used .dat file on path C:\Users\{your user}\AppData\Roaming\MoveitAccessToken.dat. This process is setted in TokenStorage, if you want to change token storage.* <br/>
+    *The UI service implements both Token Authentication and a Token Revocation mechanism. When the token expires, it is revoked, and the user will be redirected to the login screen. A new authentication using a username and password (provided by MOVEit support) will be required. The token is stored locally on the machine in a .dat file at: C:\Users\{your_user}\AppData\Roaming\MoveitAccessToken.dat. This process is managed by TokenStorage, and if needed, you can modify the token storage settings.* <br/>
 
 🖥️ Screenshots:
  🔹 Login View: <br/> <img src="https://github.com/user-attachments/assets/658e2002-aa6d-415a-add4-08880cf93d55" alt="Login view" width="300" height="200"> <br/>
@@ -102,25 +102,25 @@
 🔹 Provides logging, monitoring, and observability <br/>
 
 **🚀Improvements:**
-✅ Refactor Logging:
+✅ Refactor Logging: <br/>
 🔹 Improve WPF Logging (currently using Console.WriteLine) <br/>
 🔹 Implement Structured Logging in API & Background Service <br/>
 <br/>
-✅ Monitoring & Observability:
+✅ Monitoring & Observability: <br/>
 🔹 Integrate Prometheus / Grafana for real-time metrics & logging <br/>
 <br/>
-✅ Enhanced Security & Reliability:
+✅ Enhanced Security & Reliability: <br/>
 🔹 Implement retry mechanisms using Polly for API & SignalR failures
 🔹 UI Retries if SignalR goes down <br/>
 🔹 API retry logic for handling Moveit API Rate Limits<br/>
 <br/>
-✅ Background Service Enhancements:
+✅ Background Service Enhancements: <br/>
 🔹 Stop folder monitoring if token expires <br/>
 🔹 Restrict folder to Read-Only when unauthorized <br/>
 <br/>
-✅ Testing & Automation:
+✅ Testing & Automation: <br/>
 🔹 Add End-to-End (E2E) Tests <br/>
 🔹 Expand Unit Tests & Integration Tests <br/>
 <br/>
-✅ Future Cloud Storage Support:
+✅ Future Cloud Storage Support: <br/>
 🔹 AWS S3, Azure Blob Storage, or Google Drive <br/>
