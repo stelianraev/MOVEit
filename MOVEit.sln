@@ -11,13 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveitApi", "src\MoveitApi\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveitDesktopUI", "src\MoveitDesktopUI\MoveitDesktopUI.csproj", "{97DE7390-B774-4728-916A-216C8C19D169}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireHosting", "AspireHosting\AspireHosting.csproj", "{8CC88FAC-8FDB-41D3-8E5C-D4384926D2DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireHosting", "src\AspireHosting\AspireHosting.csproj", "{8CC88FAC-8FDB-41D3-8E5C-D4384926D2DD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FB2A3DFB-0F27-4668-8E9F-B52FE1DA977A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{725501B8-1B0C-40BA-A683-F7DBC1FD1854}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveitApiTest", "MoveitApiTest\MoveitApiTest.csproj", "{E22C24BD-1B66-4341-A244-D7F2C1A53064}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveitApiTest", "src\MoveitApiTest\MoveitApiTest.csproj", "{E22C24BD-1B66-4341-A244-D7F2C1A53064}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

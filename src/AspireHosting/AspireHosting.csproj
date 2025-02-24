@@ -16,10 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\MoveitApi\MoveitApi.csproj" />
-    <ProjectReference Include="..\src\MoveitClient\MoveitClient.csproj" />
-    <ProjectReference Include="..\src\MoveitDesktopUI\MoveitDesktopUI.csproj" />
-    <ProjectReference Include="..\src\MoveitFileObserverService\MoveitFileObserverService.csproj" />
+    <ProjectReference Include="..\MoveitApi\MoveitApi.csproj" />
+    <ProjectReference Include="..\MoveitClient\MoveitClient.csproj" />
+    <ProjectReference Include="..\MoveitDesktopUI\MoveitDesktopUI.csproj" />
+    <ProjectReference Include="..\MoveitFileObserverService\MoveitFileObserverService.csproj" />
   </ItemGroup>
 
 </Project>
