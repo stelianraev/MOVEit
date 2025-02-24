@@ -201,24 +201,16 @@ namespace MoveitDesktopUI
                         }
                         else
                         {
-                            //var revokeTokenResponse = await RevokeTokenAsync(accessToken!.Token!.AccessToken);
-                            //var responseContent = await revokeTokenResponse.Content.ReadAsStringAsync();
-                            //var isTokenRevoked = JsonConvert.DeserializeObject<RevokeTokenResponse>(responseContent);
+                            var revokeTokenResponse = await RevokeTokenAsync(accessToken!.Token!.AccessToken);
+                            var responseContent = await revokeTokenResponse.Content.ReadAsStringAsync();
+                            var isTokenRevoked = JsonConvert.DeserializeObject<RevokeTokenResponse>(responseContent);
 
-                            //if (isTokenRevoked != null && isTokenRevoked.StatusCode == "200")
-                            //{
-                            //    var revokeToken = TokenStorage.GetAccessToken();
-                            //    TokenStorage.SaveAccessToken(revokeToken.AccessToken, revokeToken.TokenExpireSeconds, revokeToken.RefreshToken, DateTime.UtcNow.AddSeconds(revokeToken.TokenExpireSeconds));
-                            //}
+                            TokenStorage.RemoveAccessToken();
 
-                            UsernameInput.Visibility = Visibility.Visible;
-                            PasswordInput.Visibility = Visibility.Visible;
-                            UsernameLabel.Visibility = Visibility.Visible;
-                            PasswordLabel.Visibility = Visibility.Visible;
-                            LoginBtn.Visibility = Visibility.Visible;
-
-                            LocalFileTree.Visibility = Visibility.Hidden;
-                            RemoteFileTree.Visibility = Visibility.Hidden;
+                            await Application.Current.Dispatcher.InvokeAsync(() =>
+                            {
+                                ShowLoginScreen();
+                            });
                         }
                     }
                 }
@@ -231,19 +223,31 @@ namespace MoveitDesktopUI
             }
         }
 
+        private void ShowLoginScreen()
+        {
+            LocalFileTree.Visibility = Visibility.Hidden;
+            RemoteFileTree.Visibility = Visibility.Hidden;
 
-        //private async Task<HttpResponseMessage> RevokeTokenAsync(string token)
-        //{
-        //    var requestData = new Dictionary<string, string>
-        //        {
-        //              { "token", token }
-        //        };
+            UsernameInput.Visibility = Visibility.Visible;
+            PasswordInput.Visibility = Visibility.Visible;
+            UsernameLabel.Visibility = Visibility.Visible;
+            PasswordLabel.Visibility = Visibility.Visible;
+            LoginBtn.Visibility = Visibility.Visible;
+        }
 
-        //    var json = JsonConvert.SerializeObject(requestData);
-        //    var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        //    return await _httpClient.PostAsync("https://localhost:7040/authenticate/revoke", content);
-        //}
+        private async Task<HttpResponseMessage> RevokeTokenAsync(string token)
+        {
+            var requestData = new Dictionary<string, string>
+                {
+                      { "token", token }
+                };
+
+            var json = JsonConvert.SerializeObject(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            return await _httpClient.PostAsync("https://localhost:7040/authenticate/revoke", content);
+        }
 
         private (bool IsTokenValid, TokenStorage.TokenData? Token) IsTokenValid()
         {
